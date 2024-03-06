@@ -25,3 +25,7 @@ doc/api/
 
 .flutter-plugins
 .flutter-plugins-dependencies
+*.dll
+*.exp
+LLM/educ_ai_tion/windows/flutter/ephemeral/flutter_windows.dll.lib
+*.pdb
