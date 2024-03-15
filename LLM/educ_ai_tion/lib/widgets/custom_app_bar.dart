@@ -1,4 +1,3 @@
-
 import 'package:educ_ai_tion/screens/file_upload_screen.dart';
 import 'package:educ_ai_tion/screens/question_generator_screen.dart';
 import 'package:educ_ai_tion/screens/settings_screen.dart';
@@ -6,6 +5,9 @@ import 'package:educ_ai_tion/screens/teacher_home_page.dart';
 import 'package:educ_ai_tion/screens/teachers_portal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:educ_ai_tion/screens/login_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:educ_ai_tion/services/login_service.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final String title;
@@ -71,6 +73,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
 class DrawerMenu extends StatelessWidget {
   const DrawerMenu({super.key});
 
+  Future<void> _signOut(BuildContext context) async {
+    try {
+      await FirebaseAuth.instance.signOut();
+      print("Sign out successful.");
+      // Navigate back to the login screen
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => LoginScreen()),
+      );
+    } catch (e) {
+      print('Error signing out: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -89,7 +105,8 @@ class DrawerMenu extends StatelessWidget {
               Navigator.pop(context); // Close the drawer
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const TeacherHomePage()),
+                MaterialPageRoute(
+                    builder: (context) => const TeacherHomePage()),
               );
             },
           ),
@@ -102,13 +119,15 @@ class DrawerMenu extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const TeachersPortal()),
               );
             },
-          ),ListTile(
+          ),
+          ListTile(
             title: const Text('Question Generator'),
             onTap: () {
               Navigator.pop(context); // Close the drawer
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const QuestionGeneratorScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const QuestionGeneratorScreen()),
               );
             },
           ),
@@ -118,16 +137,19 @@ class DrawerMenu extends StatelessWidget {
               Navigator.pop(context); // Close the drawer
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const FileUploadScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const FileUploadScreen()),
               );
             },
-          ),ListTile(
+          ),
+          ListTile(
             title: const Text('Generate Questions'),
             onTap: () {
               Navigator.pop(context); // Close the drawer
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const QuestionGeneratorScreen()),
+                MaterialPageRoute(
+                    builder: (context) => const QuestionGeneratorScreen()),
               );
             },
           ),
@@ -140,6 +162,10 @@ class DrawerMenu extends StatelessWidget {
                 MaterialPageRoute(builder: (context) => const SettingsScreen()),
               );
             },
+          ),
+          ListTile(
+            title: const Text('Logout'), // Logout button
+            onTap: () => _signOut(context),
           ),
         ],
       ),

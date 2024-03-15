@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:educ_ai_tion/screens/teacher_home_page.dart';
 import 'package:educ_ai_tion/screens/student_home_page.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:educ_ai_tion/services/login_service.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -40,15 +41,16 @@ class LoginScreenState extends State<LoginScreen> {
           email: email,
           password: password,
         );
-        // Update the 'signedIn' status to true after the first sign-up
-        await updateSignedInStatus(email, true);
+        // Update the 'signedUn' status to true after the first sign-up
+        await updateSignedUpStatus(email, true);
         print('Sign up successful!');
       } else {
         await _auth.signInWithEmailAndPassword(
           email: email,
           password: password,
         );
-
+        // Update the 'signedIn' status to true each time the user signs in
+        await updateSignedInStatus(email, true);
         print('Sign in successful!');
       }
 
@@ -122,14 +124,14 @@ class LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  Future<void> updateSignedInStatus(String email, bool signedIn) async {
+  Future<void> updateSignedUpStatus(String email, bool signedUp) async {
     try {
       await FirebaseFirestore.instance
           .collection('users')
           .doc(email)
-          .update({'signedIn': signedIn});
+          .update({'signedUp': signedUp});
     } catch (e) {
-      print('Error updating signedIn status: $e');
+      print('Error updating signedUp status: $e');
     }
   }
 
