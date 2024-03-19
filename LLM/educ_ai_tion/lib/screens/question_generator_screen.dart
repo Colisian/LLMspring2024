@@ -30,6 +30,8 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
   final OpenAIService _openAIService =
       OpenAIService(); // Instantiate your OpenAIService
 
+  bool _isLoading = false;
+
   String gradeLevelToName(int gradeLevel) {
     if(gradeLevel >= 1 && gradeLevel <=5){
       return "Elementary";
@@ -53,6 +55,12 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
       );
       return;
     }
+
+  setState(() {
+    _isLoading = true;
+  });
+
+
     final String gradeLevelName = gradeLevelToName(_selectedGradeLevel!);
     final String prompt =
         "Create questions for a $gradeLevelName student at the $_selectedDifficultyLevel level with these parameters: ${_controller.text}.";
@@ -72,6 +80,10 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
             content:
                 Text('Failed to generate questions. Please try again later.')),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -230,6 +242,9 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
                     ),
                     child: const Text('Generate Questions')),
                 const SizedBox(height: 20),
+              if (_isLoading) // Show loading indicator
+                const Expanded(child: Center(child: CircularProgressIndicator()))
+              else if (_generatedQuestions.isNotEmpty) // Only show if questions are generated
                 Expanded(
                   child: SingleChildScrollView(
                     child: Text(_generatedQuestions),
