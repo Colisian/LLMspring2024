@@ -21,22 +21,31 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
   final TextEditingController _controller = TextEditingController();
   String _generatedQuestions = "";
 
-  String? _selectedSchoolLevel;
+  int? _selectedGradeLevel;
   String? _selectedDifficultyLevel;
 
-  final List<String> _schoolLevels = ['High-School', 'Middle School','Elementary School'];
+  final List<int> _gradeLevels = List.generate(12, (index) => index + 1);
   final List<String> _difficultyLevels = ['Hard', 'Medium', 'Easy'];
 
   final OpenAIService _openAIService =
       OpenAIService(); // Instantiate your OpenAIService
 
+  String gradeLevelToName(int gradeLevel) {
+    if(gradeLevel >= 1 && gradeLevel <=5){
+      return "Elementary";
+    } else if(gradeLevel >= 6 && gradeLevel <=8){
+      return "Middle School";
+    } else if(gradeLevel >= 9 && gradeLevel <=12){
+      return "High School";
+    } else {
+      return "Unknown";
+    }
+  }
+
+
   /// Generates questions based on the input text using the OpenAIService.
   void _generateQuestions() async {
-    if (_controller.text.isEmpty) {
-      // Optionally handle the case where the text field is empty
-      return;
-    }
-    if (_selectedSchoolLevel == null || _selectedDifficultyLevel == null) {
+    if (_controller.text.isEmpty || _selectedGradeLevel ==null || _selectedDifficultyLevel == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
             content: Text('Please select a school level and difficulty.')),
@@ -44,8 +53,9 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
       );
       return;
     }
+    final String gradeLevelName = gradeLevelToName(_selectedGradeLevel!);
     final String prompt =
-        "Create questions for a $_selectedSchoolLevel student at the $_selectedDifficultyLevel level with these parameters: ${_controller.text}.";
+        "Create questions for a $gradeLevelName student at the $_selectedDifficultyLevel level with these parameters: ${_controller.text}.";
 
     try {
       // Use the OpenAIService to generate questions based on the input text
@@ -158,25 +168,25 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
-                      child: DropdownButtonFormField<String>(
-                        value: _selectedSchoolLevel,
+                      child: DropdownButtonFormField<int>(
+                        value: _selectedGradeLevel,
                         decoration: InputDecoration(
-                          labelText: 'Select School Level',
-                          contentPadding: EdgeInsets.symmetric(
+                          labelText: 'Select Grade Level',
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
                           ),
                         ),
-                        items: _schoolLevels.map((String value) {
-                          return DropdownMenuItem<String>(
+                        items: _gradeLevels.map((int value) {
+                          return DropdownMenuItem<int>(
                             value: value,
-                            child: Text(value),
+                            child: Text(value.toString()),
                           );
                         }).toList(),
-                        onChanged: (value) {
+                        onChanged: (int? value) {
                           setState(() {
-                            _selectedSchoolLevel = value;
+                            _selectedGradeLevel = value;
                           });
                         },
                       ),
@@ -187,7 +197,7 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
                         value: _selectedDifficultyLevel,
                         decoration: InputDecoration(
                           labelText: 'Select Difficulty',
-                          contentPadding: EdgeInsets.symmetric(
+                          contentPadding: const EdgeInsets.symmetric(
                               vertical: 10.0, horizontal: 10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
