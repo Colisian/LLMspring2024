@@ -11,7 +11,7 @@ class StudentHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Student Home Page'),
+        title: const Text('S T U D E N T  H O M E  P A G E'),
       ),
       body: Center(
         child: Column(

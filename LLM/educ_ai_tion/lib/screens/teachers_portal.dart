@@ -16,14 +16,16 @@ class _TeachersPortalState extends State<TeachersPortal> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color(0xFF300D67),
       appBar: CustomAppBar(
-          title: 'Teacher \'s Portal',
-          onMenuPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-        ),
-        drawer: const DrawerMenu(),
+        title: 'T E A C H E R   P O R T A L',
+        onMenuPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
+      drawer: const DrawerMenu(),
       body: LayoutBuilder(
+        //Responsive layout
         builder: (context, constraints) {
           if (constraints.maxWidth > 600) {
             // For tablets or larger screens
@@ -39,8 +41,6 @@ class _TeachersPortalState extends State<TeachersPortal> {
 
   Widget _buildTabletOrLargeScreenLayout() {
     return Container(
-      color: Colors.lightBlue[100],
-      padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -99,9 +99,9 @@ class _TeachersPortalState extends State<TeachersPortal> {
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.blue[700],
                   foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
+                  shape: const RoundedRectangleBorder(
+                      //borderRadius: BorderRadius.circular(10.0),
+                      ),
                   minimumSize: const Size(200, 50),
                 ),
                 child: const Text('Generated Questions'),
@@ -150,8 +150,6 @@ class _TeachersPortalState extends State<TeachersPortal> {
 
   Widget _buildMobileLayout() {
     return Container(
-      color: Colors.lightBlue[100],
-      padding: const EdgeInsets.all(20.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -229,7 +227,10 @@ class _TeachersPortalState extends State<TeachersPortal> {
                 borderRadius: BorderRadius.circular(10.0),
               ),
             ),
-            child: const Text('Generated Questions'),
+            child: const Text(
+              'Generate Questions',
+              style: TextStyle(fontSize: 20),
+            ),
           ),
         ],
       ),

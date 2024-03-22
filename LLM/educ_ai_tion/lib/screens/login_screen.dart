@@ -204,8 +204,10 @@ class LoginScreenState extends State<LoginScreen> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: const Text('Password Reset Email Sent'),
-            content: const Text('Check your email for a password reset link.'),
+            title: Text('Password Reset Email Sent',
+                style: TextStyle(color: Colors.white)),
+            content: Text('Check your email for a password reset link.',
+                style: TextStyle(color: Colors.white)),
             actions: [
               TextButton(
                 onPressed: () {
@@ -238,67 +240,136 @@ class LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isSigningUp ? 'Sign Up' : 'Login'),
+        backgroundColor: Color.fromARGB(255, 99, 3, 151),
+        title: Text(_isSigningUp ? 'S I G N   U P' : 'L O G I N',
+            style: TextStyle(color: Colors.white)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(labelText: 'Email'),
-            ),
-            TextField(
-              controller: _passwordController,
-              onChanged: (value) {
-                // Triggered every time the password field changes
-                setState(() {
-                  // Check if the password is at least 6 characters long
-                  _isPasswordValid = value.length >= 6;
-                });
-              },
-              decoration: InputDecoration(
-                labelText: 'Password',
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _showPassword ? Icons.visibility : Icons.visibility_off,
-                  ),
-                  onPressed: _togglePasswordVisibility,
-                ),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // Wrap with SingleChildScrollView for vertical scrolling
+
+          child: Container(
+            height: MediaQuery.of(context).size.height,
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  Color(0xFF3039E1),
+                  Color(0xFF300D67),
+                  Color(0xFF50017B)
+                ],
               ),
-              obscureText: !_showPassword,
             ),
-            if (_isSigningUp && _passwordController.text.length < 6)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            //gradient-----------------------------------------------------------
+
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                // mainAxisAlignment: MainAxisAlignment.center,
+
                 children: [
-                  const Text(
-                    'Password must be at least 6 characters long.',
-                    style: TextStyle(color: Color.fromARGB(255, 63, 16, 151)),
+                  SizedBox(height: 88),
+                  Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: 250,
+                      child: TextField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          labelText: 'Email',
+                          labelStyle: TextStyle(color: Colors.white),
+                          fillColor: Colors.white,
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                  TextButton(
-                    onPressed: _resetPassword,
-                    child: const Text('Forgot Password?'),
+                  const SizedBox(height: 48),
+                  Align(
+                    alignment: Alignment.center,
+                    child: SizedBox(
+                      width: 250,
+                      child: TextField(
+                        controller: _passwordController,
+                        onChanged: (value) {
+                          // Triggered every time the password field changes
+                          setState(() {
+                            // Check if the password is at least 6 characters long
+                            _isPasswordValid = value.length >= 6;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Password',
+                          labelStyle: TextStyle(color: Colors.white),
+                          fillColor: Colors.white,
+                          filled: true,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                            borderSide: BorderSide.none,
+                          ),
+                          suffixIcon: IconButton(
+                            icon: Icon(
+                              _showPassword
+                                  ? Icons.visibility
+                                  : Icons.visibility_off,
+                            ),
+                            onPressed: _togglePasswordVisibility,
+                          ),
+                        ),
+                        obscureText: !_showPassword,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 48),
+                  if (_isSigningUp && _passwordController.text.length < 6)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text(
+                          'Password must be at least 6 characters long.',
+                          style: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        //  ),
+                        // ),
+
+                        TextButton(
+                          onPressed: _resetPassword,
+                          child: const Text(
+                            'Forgot Password?',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _authenticate,
+                    child: Text(
+                      _isSigningUp ? 'Sign Up' : 'Sign In',
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  ElevatedButton(
+                    onPressed: _toggleSignup,
+                    child: Text(
+                        _isSigningUp ? 'Switch to Login' : 'Switch to Sign Up'),
                   ),
                 ],
               ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: _authenticate,
-              child: Text(_isSigningUp ? 'Sign Up' : 'Sign In'),
             ),
-            const SizedBox(height: 8),
-            ElevatedButton(
-              onPressed: _toggleSignup,
-              child:
-                  Text(_isSigningUp ? 'Switch to Login' : 'Switch to Sign Up'),
-            ),
-          ],
+          ),
         ),
       ),
     );
-  }
+  } //
 
   Future<bool> checkUserExists(String email) async {
     try {

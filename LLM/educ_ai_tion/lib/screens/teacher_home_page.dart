@@ -14,82 +14,108 @@ class TeacherHomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Teacher Home Page',
+        title: 'T E A C H E R   H O M E   P A G E',
         onMenuPressed: () {
           Scaffold.of(context).openDrawer();
         },
       ),
       drawer: const DrawerMenu(),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Text('Welcome to ESS'),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => TeachersPortal()),
-                );
-              },
-              child: const Text('Teacher Portal'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => FileUploadScreen(),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          // Wrap with SingleChildScrollView for vertical scrolling
+          child: Stack(
+            children: [
+              Container(
+                height: MediaQuery.of(context).size.height,
+                decoration: const BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topRight,
+                    end: Alignment.bottomLeft,
+                    colors: [
+                      Color(0xFF3039E1),
+                      Color(0xFF300D67),
+                      Color(0xFF50017B)
+                    ],
                   ),
-                );
-              },
-              child: const Text('I want to upload a file!'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QuestionGeneratorScreen(),
-                  ),
-                );
-              },
-              child: const Text('Generate Questions'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QuestionDisplayScreen(),
-                  ),
-                );
-              },
-              child: const Text('Display Questions'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => QuestionFileList(),
-                  ),
-                );
-              },
-              child: const Text('Saved Questions List'),
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => SettingsScreen(),
-                  ),
-                );
-              },
-              child: const Text('Go to Settings'),
-            ),
-          ],
+                ),
+                //gradient-----------------------------------------------------------
+              ),
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    const Text('Welcome to ESS'),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const TeachersPortal()),
+                        );
+                      },
+                      child: const Text('Teacher Portal'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FileUploadScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text('I want to upload a file!'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                const QuestionGeneratorScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text('Generate Questions'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const QuestionDisplayScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text('Display Questions'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const QuestionFileList(),
+                          ),
+                        );
+                      },
+                      child: const Text('Saved Questions List'),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const SettingsScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text('Go to Settings'),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

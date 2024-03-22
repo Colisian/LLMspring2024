@@ -10,12 +10,12 @@ class GeneratedQuestionsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-          title: 'Generated Questions',
-          onMenuPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-        ),
-        drawer: const DrawerMenu(),
+        title: 'G E N E R A T E D   Q U E S T I O N S',
+        onMenuPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
+      drawer: const DrawerMenu(),
       body: FutureBuilder(
         future: loadQuestions(),
         builder:

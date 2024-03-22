@@ -132,7 +132,7 @@ class _QuestionDisplayScreenState extends State<QuestionDisplayScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Display Questions',
+        title: 'D I S P L A Y   Q U E S T I O N S',
         onMenuPressed: () {
           Scaffold.of(context).openDrawer();
         },

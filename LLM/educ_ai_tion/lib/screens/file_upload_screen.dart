@@ -99,7 +99,7 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Upload Content',
+        title: 'U P L O A D   C O N T E N T',
         onMenuPressed: () {
           Scaffold.of(context).openDrawer();
         },

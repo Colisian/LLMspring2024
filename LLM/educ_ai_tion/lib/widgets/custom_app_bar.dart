@@ -47,7 +47,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.yellowAccent,
+      backgroundColor: Color.fromARGB(255, 99, 3, 151),
       title: Row(
         children: [
           const SizedBox(width: 8),

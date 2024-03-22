@@ -24,7 +24,11 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
   String? _selectedSchoolLevel;
   String? _selectedDifficultyLevel;
 
-  final List<String> _schoolLevels = ['High-School', 'Middle School','Elementary School'];
+  final List<String> _schoolLevels = [
+    'High-School',
+    'Middle School',
+    'Elementary School'
+  ];
   final List<String> _difficultyLevels = ['Hard', 'Medium', 'Easy'];
 
   final OpenAIService _openAIService =
@@ -131,12 +135,12 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-          title: 'Question Generator',
-          onMenuPressed: () {
-            Scaffold.of(context).openDrawer();
-          },
-        ),
-        drawer: const DrawerMenu(),
+        title: 'Q U E S T I O N   G E N E R A T O R',
+        onMenuPressed: () {
+          Scaffold.of(context).openDrawer();
+        },
+      ),
+      drawer: const DrawerMenu(),
       body: Stack(
         children: [
           Padding(

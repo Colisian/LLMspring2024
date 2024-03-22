@@ -59,7 +59,7 @@ class _FileListViewState extends State<QuestionFileList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: CustomAppBar(
-        title: 'Saved Questions List',
+        title: 'S A V E D   Q U E S T I O N S   L I S T',
         onMenuPressed: () {
           Scaffold.of(context).openDrawer();
         },
