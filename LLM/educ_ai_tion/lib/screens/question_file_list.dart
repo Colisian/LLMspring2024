@@ -58,6 +58,7 @@ class _FileListViewState extends State<QuestionFileList> {
         },
       ),
       //drawer: const DrawerMenu(),
+      
       body: Padding(
         padding: const EdgeInsets.only(top: 30.0),
         child: ListView.builder(
@@ -65,13 +66,14 @@ class _FileListViewState extends State<QuestionFileList> {
           itemBuilder: (context, index) {
             String fileName = fileNames[index];
 
-            return ListTile(
-              title: Text(fileName),
+            
+          return Card(child: ListTile(title: Text(fileName),
+              
               trailing: TextButton(
                 onPressed: () => downloadFile(fileName),
                 child: Text('Download'),
-              ),
-            );
+              ),),);
+            
           },
         ),
       ),

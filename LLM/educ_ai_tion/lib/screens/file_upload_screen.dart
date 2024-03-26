@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 import '../services/file_service.dart';
 import 'dart:typed_data';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:educ_ai_tion/widgets/custom_app_bar.dart';
 
 class FileUploadScreen extends StatefulWidget {
   @override
@@ -10,7 +13,42 @@ class FileUploadScreen extends StatefulWidget {
 
 class _FileUploadScreenState extends State<FileUploadScreen> {
   final FileStorageService _storageService = FileStorageService();
+final Reference storageRef =
+      FirebaseStorage.instance.ref().child('selected_questions');
 
+  late List<String> fileNames = [];
+
+  @override
+  void initState() {
+    super.initState();
+    getFileNames();
+  }
+
+  Future<void> getFileNames() async {
+    try {
+      ListResult result = await storageRef.listAll();
+      setState(() {
+        fileNames = result.items.map((item) => item.name).toList();
+      });
+    } catch (e) {
+      print('Error fetching file names: $e');
+    }
+  }
+
+  Future<void> downloadFile(String fileName) async {
+    try {
+      String downloadUrl = await storageRef.child(fileName).getDownloadURL();
+
+      // Open the download URL in a new browser tab
+      if (await canLaunch(downloadUrl)) {
+        await launch(downloadUrl);
+      } else {
+        throw 'Could not launch $downloadUrl';
+      }
+    } catch (e) {
+      print('Error downloading file: $e');
+    }
+  }
   // Store file names and their bytes
   Map<String, Uint8List> _pickedFilesBytes = {};
   Map<String, bool> _pickedFilesSelection = {};
@@ -109,6 +147,24 @@ class _FileUploadScreenState extends State<FileUploadScreen> {
               },
             ),
           ),
+          Padding(
+        padding: const EdgeInsets.only(top: 30.0),
+        child: ListView.builder(
+          itemCount: fileNames.length,
+          itemBuilder: (context, index) {
+            String fileName = fileNames[index];
+
+            
+          return Card(child: ListTile(title: Text(fileName),
+              
+              trailing: TextButton(
+                onPressed: () => downloadFile(fileName),
+                child: Text('Download'),
+              ),),);
+            
+          },
+        ),
+      ),
           Padding(
               padding: const EdgeInsets.all(8.0),
               child: ElevatedButton(
