@@ -60,6 +60,44 @@ class _HomeworkFileState extends State<HomeworkFileList> {
       } else {
         print('Failed to load file content');
       }
+
+      setState(() {});
+    }
+  }
+
+  Future<void> _uploadToAI() async {
+    if (_pickedFilesSelection.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("No files selected")),
+      );
+      return;
+    }
+
+    var filesToUpload = _pickedFilesSelection.keys
+        .where((name) => _pickedFilesSelection[name]!)
+        .toList();
+
+    if (filesToUpload.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("No files selected to upload")),
+      );
+      return;
+    }
+
+    try {
+      for (String fileName in filesToUpload) {
+        Uint8List fileBytes =
+            _pickedFilesBytes[fileName]!; // Use bytes directly
+        await _storageService.uploadFile(fileName, fileBytes); // Upload file
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Uploaded file to Storage: $fileName")),
+        );
+        setState(() {
+          _pickedFilesSelection.remove(fileName);
+          _pickedFilesBytes.remove(fileName);
+        });
+      }
+      await getFileNames();
     } catch (e) {
       print('Error fetching file content: $e');
     }
