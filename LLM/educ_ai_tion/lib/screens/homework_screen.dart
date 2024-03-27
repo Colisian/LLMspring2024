@@ -1,10 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
-import 'dart:io';
-import 'package:educ_ai_tion/models/assignment_submission.dart';
 
 class HomeworkFileList extends StatefulWidget {
   const HomeworkFileList({Key? key});
@@ -14,17 +13,18 @@ class HomeworkFileList extends StatefulWidget {
 }
 
 class _HomeworkFileState extends State<HomeworkFileList> {
-  
-final TextEditingController _controllerOne = TextEditingController();
+  final TextEditingController _controllerOne = TextEditingController();
   final TextEditingController _controllerTwo = TextEditingController();
   final TextEditingController _controllerThree = TextEditingController();
   final TextEditingController _controllerFour = TextEditingController();
 
-  final Reference _storageRef = FirebaseStorage.instance.ref().child('selected_questions');
+  final Reference _storageRef =
+      FirebaseStorage.instance.ref().child('selected_questions');
   List<String> fileNames = [];
   String? selectedFile;
 
-  final AssignmentData _assignmentData = AssignmentData(); // Instance of AssignmentData
+  final AssignmentData _assignmentData =
+      AssignmentData(); // Instance of AssignmentData
 
   @override
   void initState() {
@@ -35,7 +35,10 @@ final TextEditingController _controllerOne = TextEditingController();
   Future<void> _fetchFileNames() async {
     try {
       final result = await _storageRef.listAll();
-      final names = result.items.map((item) => item.name).where((name) => name.endsWith('.txt')).toList();
+      final names = result.items
+          .map((item) => item.name)
+          .where((name) => name.endsWith('.txt'))
+          .toList();
       setState(() {
         fileNames = names;
       });
@@ -65,11 +68,13 @@ final TextEditingController _controllerOne = TextEditingController();
     try {
       // Create a new AssignmentSubmission object with data from text fields
       AssignmentSubmission submission = AssignmentSubmission(
-        assignmentId: selectedFile ?? '', // Assuming selectedFile contains assignment ID
+        assignmentId:
+            selectedFile ?? '', // Assuming selectedFile contains assignment ID
         student: Student(
           firstName: _controllerTwo.text.trim(),
           lastName: _controllerThree.text.trim(),
-          email: _controllerFour.text.trim(), // Assuming _controllerFour for email field
+          email: _controllerFour.text
+              .trim(), // Assuming _controllerFour for email field
         ),
         answers: _controllerOne.text.trim(),
         submissionDateTime: DateTime.now(),
@@ -195,38 +200,20 @@ class Student {
 
 class AssignmentData {
   Future<void> addAssignmentSubmission(AssignmentSubmission submission) async {
-     Future<void> addAssignmentSubmission(AssignmentSubmission submission) async {
-  try {
-  Future<void> addAssignmentSubmission(AssignmentSubmission submission) async {
-  try {
-    await FirebaseFirestore.instance
-        .collection('assignment_submissions')
-        .doc(submission.assignmentId)
-        .set({
-      'studentFirstName': submission.student.firstName,
-      'studentLastName': submission.student.lastName,
-      'studentEmail': submission.student.email,
-      'answers': submission.answers,
-      'submissionDateTime': submission.submissionDateTime,
-    });
-  } catch (e) {
-    print('Error adding assignment submission: $e');
-    throw e;
-  }
-}
-        .collection('assignment_submissions')
-        .doc(submission.assignmentId)
-        .set({
-      'studentFirstName': submission.student.firstName,
-      'studentLastName': submission.student.lastName,
-      'studentEmail': submission.student.email,
-      'answers': submission.answers,
-      'submissionDateTime': submission.submissionDateTime,
-    });
-  } catch (e) {
-    print('Error adding assignment submission: $e');
-    throw e;
-  }
-     }
+    try {
+      await FirebaseFirestore.instance
+          .collection('assignment_submissions')
+          .doc(submission.assignmentId)
+          .set({
+        'studentFirstName': submission.student.firstName,
+        'studentLastName': submission.student.lastName,
+        'studentEmail': submission.student.email,
+        'answers': submission.answers,
+        'submissionDateTime': submission.submissionDateTime,
+      });
+    } catch (e) {
+      print('Error adding assignment submission: $e');
+      throw e;
+    }
   }
 }
