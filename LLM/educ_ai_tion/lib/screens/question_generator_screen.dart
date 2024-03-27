@@ -183,7 +183,7 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
             const SizedBox(height: 20),
             Expanded(
               child: SingleChildScrollView(
-                child: Text(_generatedQuestions.replaceAll('~', '')),
+                child: Text(displayText()),
               ),
             ),
             if (_isLoading)
@@ -268,11 +268,12 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
     final int numberOfQuestions = int.parse(_numberOfQuestionsController);
 
     final String prompt =
-        "Create $numberOfQuestions ${_selectedSubject.toString().split('.').last} questions for a ${_selectedSchoolLevel} student at the ${_selectedDifficultyLevel.toString().split('.').last} level with these parameters: ${_controller.text}. At the end of each question, add delimiter '~'. Also create an answer key for each question and enclose within parenthesis.";
+        "Create $numberOfQuestions ${_selectedSubject.toString().split('.').last} questions for a ${_selectedSchoolLevel} student at the ${_selectedDifficultyLevel.toString().split('.').last} level with these parameters: ${_controller.text}. Add a ~ at the end of each question and any question options if applicable. Also sandwich the answer for each question in between pipes after the question.";
 
     try {
       final String response =
           await _openAIService.generateText(prompt, 'gpt-4');
+
       setState(() {
         _generatedQuestions = response;
       });
@@ -300,12 +301,12 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
     }
 
     try {
-      final List<String> questionLines = _generatedQuestions.split('~');
-      final List<String> answers =
-          _extractAnswersFromPrompt(_generatedQuestions);
+      final List<List<String>> questionsAndAnswers =
+          _extractQuestionsAndAnswersFromPrompt(_generatedQuestions);
+
       final List<Future<void>> savingTasks = [];
 
-      if (questionLines.length != answers.length) {
+      if (questionsAndAnswers.length != questionsAndAnswers.length) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Mismatch between questions and answers')),
@@ -313,15 +314,15 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
         return;
       }
 
-      for (int i = 0; i < questionLines.length; i++) {
+      for (int i = 0; i < questionsAndAnswers.length; i++) {
         final Question question = Question(
             topic: _controller.text.trim(),
             difficulty: _selectedDifficultyLevel ?? Difficulty.easy,
-            question: questionLines[i].trim(),
+            question: questionsAndAnswers[i][0].trim(),
             date: DateTime.now(),
             grade: _selectedSchoolLevel ?? 1,
             subject: _selectedSubject!,
-            answer: answers[i].trim());
+            answer: questionsAndAnswers[i][1].trim());
 
         final Future<void> saveTask = FirebaseFirestore.instance
             .collection('questions')
@@ -346,18 +347,37 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
     }
   }
 
-  List<String> _extractAnswersFromPrompt(String prompt) {
-    final RegExp regExp =
-        RegExp(r'\((.*?)\)'); // Search for the text within the parenthesis
-    final matches = regExp.allMatches(prompt);
-    final List<String> answers = [];
-    for (final match in matches) {
-      final answer = match.group(1);
-      if (answer != null) {
-        answers.add(answer);
+  List<List<String>> _extractQuestionsAndAnswersFromPrompt(String prompt) {
+    final List<String> entries = prompt.split('|');
+    final List<List<String>> questionsAndAnswers = [];
+
+    for (int i = 0; i < entries.length - 1; i += 2) {
+      final question = entries[i].replaceAll('~', '').trim();
+      final answer = entries[i + 1].trim();
+
+      if (question.isNotEmpty && answer.isNotEmpty) {
+        questionsAndAnswers.add([question.trim(), answer.trim()]);
       }
     }
-    return answers;
+
+    return questionsAndAnswers;
+  }
+
+  String displayText() {
+    String finalText = '';
+    if (_generatedQuestions.isNotEmpty) {
+      print('prompt is $_generatedQuestions');
+      final List<List<String>> questionsAndAnswers =
+          _extractQuestionsAndAnswersFromPrompt(_generatedQuestions);
+      for (int i = 0; i < questionsAndAnswers.length; i++) {
+        finalText += '\n' +
+            questionsAndAnswers[i][0].trim() +
+            '\nAnswer: ' +
+            questionsAndAnswers[i][1].trim() +
+            '\n';
+      }
+    }
+    return finalText; // Ensure to return a String in all cases
   }
 
   void _clearResponse() async {
