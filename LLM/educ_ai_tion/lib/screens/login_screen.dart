@@ -295,6 +295,12 @@ class LoginScreenState extends State<LoginScreen> {
                   'Password must be at least 6 characters long.',
                   style: TextStyle(color: Color.fromARGB(255, 63, 16, 151)),
                 ),
+              ],
+            ),
+          if (!_isSigningUp)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
                 TextButton(
                   onPressed: _resetPassword,
                   child: const Text('Forgot Password?'),

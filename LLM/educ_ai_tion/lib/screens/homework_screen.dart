@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeworkFileList extends StatefulWidget {
   const HomeworkFileList({Key? key});
@@ -18,11 +19,10 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   final TextEditingController _controllerFour = TextEditingController();
   final TextEditingController _controllerFive = TextEditingController();
 
- final Reference storageRef =
+  final Reference storageRef =
       FirebaseStorage.instance.ref().child('selected_questions');
   List<String> fileNames = [];
   String? selectedFile;
-
 
   final AssignmentData _assignmentData =
       AssignmentData(); // Instance of AssignmentData
@@ -31,40 +31,42 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   void initState() {
     super.initState();
     _fetchFileNames();
+    _populateUserEmail();
   }
 
- 
-
- Future<void> _fetchFileNames() async {
-    try{
+  Future<void> _fetchFileNames() async {
+    try {
       final result = await storageRef.listAll();
-      final names = result.items.map((item) => item.name).where((name) => name.endsWith('.txt')).toList();
-      setState((){
+      final names = result.items
+          .map((item) => item.name)
+          .where((name) => name.endsWith('.txt'))
+          .toList();
+      setState(() {
         fileNames = names;
       });
-      } catch (e) {
-        _showSnackBar('Error fetching file names: $e');
-      }
+    } catch (e) {
+      _showSnackBar('Error fetching file names: $e');
     }
-
- Future<void> _fetchFileContent(String fileName) async {
-  try {
-    final downloadUrl = await storageRef.child(fileName).getDownloadURL();
-    final response = await http.get(Uri.parse(downloadUrl));
-
-    if (response.statusCode == 200) {
-      // If the server returns an OK response, update the text controller
-      setState(() {
-        _controllerOne.text = response.body;
-      });
-    } else {
-      // If the server did not return an OK response, throw an error
-      _showSnackBar('Failed to load file content');
-    }
-  } catch (e) {
-    _showSnackBar('Error fetching file content: $e');
   }
-}
+
+  Future<void> _fetchFileContent(String fileName) async {
+    try {
+      final downloadUrl = await storageRef.child(fileName).getDownloadURL();
+      final response = await http.get(Uri.parse(downloadUrl));
+
+      if (response.statusCode == 200) {
+        // If the server returns an OK response, update the text controller
+        setState(() {
+          _controllerOne.text = response.body;
+        });
+      } else {
+        // If the server did not return an OK response, throw an error
+        _showSnackBar('Failed to load file content');
+      }
+    } catch (e) {
+      _showSnackBar('Error fetching file content: $e');
+    }
+  }
 
   Future<void> _saveSubmission() async {
     try {
@@ -97,6 +99,19 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   void _showSnackBar(String message) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  Future<void> _populateUserEmail() async {
+    try {
+      // Get the current user
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        // Set the email address in the text controller
+        _controllerFour.text = user.email ?? '';
+      }
+    } catch (e) {
+      print('Error populating user email: $e');
+    }
   }
 
   @override
@@ -161,7 +176,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
                 hintText: 'Enter your email',
               ),
             ),
-             SizedBox(height: 10),
+            SizedBox(height: 10),
             Text('Enter Answers:'),
             TextField(
               controller: _controllerFive,
