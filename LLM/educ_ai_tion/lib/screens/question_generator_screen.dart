@@ -306,7 +306,7 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
 
       final List<Future<void>> savingTasks = [];
 
-      if (questionsAndAnswers.length != questionsAndAnswers.length) {
+      if (questionsAndAnswers.length != questionsAndAnswers.length + 1) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Mismatch between questions and answers')),
