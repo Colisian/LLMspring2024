@@ -305,7 +305,7 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
           _extractAnswersFromPrompt(_generatedQuestions);
       final List<Future<void>> savingTasks = [];
 
-      if (questionLines.length != answers.length) {
+      if (questionLines.length != answers.length + 1) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
               content: Text('Mismatch between questions and answers')),
@@ -313,11 +313,13 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
         return;
       }
 
-      for (int i = 0; i < questionLines.length; i++) {
+      for (int i = 0; i < answers.length; i++) {
+        final String questionWithoutAnswer = removeAnswerText(questionLines[i]);
+
         final Question question = Question(
             topic: _controller.text.trim(),
             difficulty: _selectedDifficultyLevel ?? Difficulty.easy,
-            question: questionLines[i].trim(),
+            question: questionWithoutAnswer.trim(),
             date: DateTime.now(),
             grade: _selectedSchoolLevel ?? 1,
             subject: _selectedSubject!,
@@ -344,6 +346,14 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
         const SnackBar(content: Text('Failed to save questions.')),
       );
     }
+  }
+
+  String removeAnswerText(String question) {
+    // Define a regular expression pattern to match text within parentheses
+
+    RegExp regExp = RegExp(r'\(.*?\)');
+    // Replace all occurrences of text within parentheses with an empty string
+    return question.replaceAll(regExp, '');
   }
 
   List<String> _extractAnswersFromPrompt(String prompt) {
