@@ -26,7 +26,7 @@ final List<Map<String, dynamic>> topButtonData = [
   },
   {
     'imagePath': 'assets/images/grade_icon.png',
-    'label': 'Grade',
+    'label': 'Grading',
     'destination': GradingScreen(),
   },
   {

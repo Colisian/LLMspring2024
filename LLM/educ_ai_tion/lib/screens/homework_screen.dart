@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 
 class HomeworkFileList extends StatefulWidget {
@@ -44,7 +43,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
         fileNames = names;
       });
       } catch (e) {
-        print('Error fetching file names: $e');
+        _showSnackBar('Error fetching file names: $e');
       }
     }
 
@@ -60,37 +59,31 @@ class _HomeworkFileState extends State<HomeworkFileList> {
       });
     } else {
       // If the server did not return an OK response, throw an error
-      print('Failed to load file content');
+      _showSnackBar('Failed to load file content');
     }
   } catch (e) {
-    print('Error fetching file content: $e');
+    _showSnackBar('Error fetching file content: $e');
   }
 }
 
   Future<void> _saveSubmission() async {
     try {
-      // Create a new AssignmentSubmission object with data from text fields
       AssignmentSubmission submission = AssignmentSubmission(
-        assignmentId:
-            selectedFile ?? '', // Assuming selectedFile contains assignment ID
+        assignmentId: selectedFile ?? '',
         student: Student(
           firstName: _controllerTwo.text.trim(),
           lastName: _controllerThree.text.trim(),
-          email: _controllerFour.text
-              .trim(), // Assuming _controllerFour for email field
+          email: _controllerFour.text.trim(),
         ),
         answers: _controllerFive.text.trim(),
         submissionDateTime: DateTime.now(),
       );
 
-      // Call the addAssignmentSubmission method from AssignmentData to save the submission
       await _assignmentData.addAssignmentSubmission(submission);
-
-      Fluttertoast.showToast(msg: 'Submission saved to Firebase');
-      _clearFields(); // Clear text fields after successful submission
+      _showSnackBar('Submission saved to Firebase');
+      _clearFields();
     } catch (e) {
-      print('Error saving submission: $e');
-      Fluttertoast.showToast(msg: 'Error saving submission');
+      _showSnackBar('Error saving submission');
     }
   }
 
@@ -99,6 +92,11 @@ class _HomeworkFileState extends State<HomeworkFileList> {
     _controllerTwo.clear();
     _controllerThree.clear();
     _controllerFour.clear();
+  }
+
+  void _showSnackBar(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override
