@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
-import 'package:fluttertoast/fluttertoast.dart';
 import 'dart:async';
 
 class HomeworkFileList extends StatefulWidget {
@@ -19,10 +18,11 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   final TextEditingController _controllerFour = TextEditingController();
   final TextEditingController _controllerFive = TextEditingController();
 
-  final Reference _storageRef =
+ final Reference storageRef =
       FirebaseStorage.instance.ref().child('selected_questions');
   List<String> fileNames = [];
   String? selectedFile;
+
 
   final AssignmentData _assignmentData =
       AssignmentData(); // Instance of AssignmentData
@@ -33,62 +33,57 @@ class _HomeworkFileState extends State<HomeworkFileList> {
     _fetchFileNames();
   }
 
-  Future<void> _fetchFileNames() async {
-    try {
-      final result = await _storageRef.listAll();
-      final names = result.items
-          .map((item) => item.name)
-          .where((name) => name.endsWith('.txt'))
-          .toList();
-      setState(() {
+ 
+
+ Future<void> _fetchFileNames() async {
+    try{
+      final result = await storageRef.listAll();
+      final names = result.items.map((item) => item.name).where((name) => name.endsWith('.txt')).toList();
+      setState((){
         fileNames = names;
       });
-    } catch (e) {
-      print('Error fetching file names: $e');
-    }
-  }
-
-  Future<void> _fetchFileContent(String fileName) async {
-    try {
-      final downloadUrl = await _storageRef.child(fileName).getDownloadURL();
-      final response = await http.get(Uri.parse(downloadUrl));
-
-      if (response.statusCode == 200) {
-        setState(() {
-          _controllerOne.text = response.body;
-        });
-      } else {
-        print('Failed to load file content');
+      } catch (e) {
+        _showSnackBar('Error fetching file names: $e');
       }
-    } catch (e) {
-      print('Error fetching file content: $e');
     }
+
+ Future<void> _fetchFileContent(String fileName) async {
+  try {
+    final downloadUrl = await storageRef.child(fileName).getDownloadURL();
+    final response = await http.get(Uri.parse(downloadUrl));
+
+    if (response.statusCode == 200) {
+      // If the server returns an OK response, update the text controller
+      setState(() {
+        _controllerOne.text = response.body;
+      });
+    } else {
+      // If the server did not return an OK response, throw an error
+      _showSnackBar('Failed to load file content');
+    }
+  } catch (e) {
+    _showSnackBar('Error fetching file content: $e');
   }
+}
 
   Future<void> _saveSubmission() async {
     try {
-      // Create a new AssignmentSubmission object with data from text fields
       AssignmentSubmission submission = AssignmentSubmission(
-        assignmentId:
-            selectedFile ?? '', // Assuming selectedFile contains assignment ID
+        assignmentId: selectedFile ?? '',
         student: Student(
           firstName: _controllerTwo.text.trim(),
           lastName: _controllerThree.text.trim(),
-          email: _controllerFour.text
-              .trim(), // Assuming _controllerFour for email field
+          email: _controllerFour.text.trim(),
         ),
         answers: _controllerFive.text.trim(),
         submissionDateTime: DateTime.now(),
       );
 
-      // Call the addAssignmentSubmission method from AssignmentData to save the submission
       await _assignmentData.addAssignmentSubmission(submission);
-
-      Fluttertoast.showToast(msg: 'Submission saved to Firebase');
-      _clearFields(); // Clear text fields after successful submission
+      _showSnackBar('Submission saved to Firebase');
+      _clearFields();
     } catch (e) {
-      print('Error saving submission: $e');
-      Fluttertoast.showToast(msg: 'Error saving submission');
+      _showSnackBar('Error saving submission');
     }
   }
 
@@ -97,6 +92,11 @@ class _HomeworkFileState extends State<HomeworkFileList> {
     _controllerTwo.clear();
     _controllerThree.clear();
     _controllerFour.clear();
+  }
+
+  void _showSnackBar(String message) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
   @override

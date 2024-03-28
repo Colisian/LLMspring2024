@@ -48,7 +48,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
   @override
   Widget build(BuildContext context) {
     return AppBar(
-      backgroundColor: Colors.yellowAccent,
+      backgroundColor: Color.fromARGB(255, 100, 34, 153),
       title: Row(
         children: [
           const SizedBox(width: 8),
@@ -81,75 +81,10 @@ class DrawerMenu extends StatelessWidget {
         children: <Widget>[
           const DrawerHeader(
             decoration: BoxDecoration(
-              color: Colors.blue,
+              color: Color.fromARGB(255, 52, 43, 184),
             ),
             child: Text('Menu'),
           ),
-          /* ListTile(
-            title: const Text('Teacher Dashboard'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const TeacherHomePage()),
-              );
-            },
-          ), 
-          ListTile(
-            title: const Text('Teacher Portal'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const TeachersPortal()),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Question Generator'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const QuestionGeneratorScreen()),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('I want to upload a file'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const FileUploadScreen()),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Display Questions'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const QuestionDisplayScreen()),
-              );
-            },
-          ),
-          ListTile(
-            title: const Text('Saved Questions List'),
-            onTap: () {
-              Navigator.pop(context); // Close the drawer
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const QuestionFileList()),
-              );
-            },
-          ),*/
           ListTile(
             title: const Text('Settings'),
             onTap: () {
