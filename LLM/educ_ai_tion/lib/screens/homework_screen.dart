@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomeworkFileList extends StatefulWidget {
   const HomeworkFileList({Key? key});
@@ -18,11 +19,10 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   final TextEditingController _controllerFour = TextEditingController();
   final TextEditingController _controllerFive = TextEditingController();
 
- final Reference storageRef =
+  final Reference storageRef =
       FirebaseStorage.instance.ref().child('selected_questions');
   List<String> fileNames = [];
   String? selectedFile;
-
 
   final AssignmentData _assignmentData =
       AssignmentData(); // Instance of AssignmentData
@@ -31,40 +31,66 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   void initState() {
     super.initState();
     _fetchFileNames();
+    _populateUserDetails();
   }
 
- 
+  Future<void> _populateUserDetails() async {
+    try {
+      // Get the current user's email from Firebase Auth
+      String? email = FirebaseAuth.instance.currentUser?.email;
+      if (email != null) {
+        // Query Firestore for the user's data based on their email
+        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(email)
+            .get();
+        if (snapshot.exists) {
+          // If user exists, populate the first and last name fields
+          setState(() {
+            _controllerTwo.text = snapshot['firstName'] ?? '';
+            _controllerThree.text = snapshot['lastName'] ?? '';
+            _controllerFour.text = email;
+          });
+        }
+      }
+    } catch (e) {
+      _showSnackBar('Error populating user details: $e');
+    }
+  }
 
- Future<void> _fetchFileNames() async {
-    try{
+  Future<void> _fetchFileNames() async {
+    try {
       final result = await storageRef.listAll();
-      final names = result.items.map((item) => item.name).where((name) => name.endsWith('.txt')).toList();
-      setState((){
+      final names = result.items
+          .map((item) => item.name)
+          .where((name) => name.endsWith('.txt'))
+          .toList();
+      setState(() {
         fileNames = names;
       });
-      } catch (e) {
-        _showSnackBar('Error fetching file names: $e');
-      }
+    } catch (e) {
+      _showSnackBar('Error fetching file names: $e');
     }
-
- Future<void> _fetchFileContent(String fileName) async {
-  try {
-    final downloadUrl = await storageRef.child(fileName).getDownloadURL();
-    final response = await http.get(Uri.parse(downloadUrl));
-
-    if (response.statusCode == 200) {
-      // If the server returns an OK response, update the text controller
-      setState(() {
-        _controllerOne.text = response.body;
-      });
-    } else {
-      // If the server did not return an OK response, throw an error
-      _showSnackBar('Failed to load file content');
-    }
-  } catch (e) {
-    _showSnackBar('Error fetching file content: $e');
   }
-}
+
+  Future<void> _fetchFileContent(String fileName) async {
+    try {
+      final downloadUrl = await storageRef.child(fileName).getDownloadURL();
+      final response = await http.get(Uri.parse(downloadUrl));
+
+      if (response.statusCode == 200) {
+        // If the server returns an OK response, update the text controller
+        setState(() {
+          _controllerOne.text = response.body;
+        });
+      } else {
+        // If the server did not return an OK response, throw an error
+        _showSnackBar('Failed to load file content');
+      }
+    } catch (e) {
+      _showSnackBar('Error fetching file content: $e');
+    }
+  }
 
   Future<void> _saveSubmission() async {
     try {
@@ -141,6 +167,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
             Text('Student First Name:'),
             TextField(
               controller: _controllerTwo,
+              readOnly: true,
               decoration: InputDecoration(
                 hintText: 'Enter student first name',
               ),
@@ -149,6 +176,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
             Text('Student Last Name:'),
             TextField(
               controller: _controllerThree,
+              readOnly: true,
               decoration: InputDecoration(
                 hintText: 'Enter student last name',
               ),
@@ -157,11 +185,12 @@ class _HomeworkFileState extends State<HomeworkFileList> {
             Text('Student Email:'),
             TextField(
               controller: _controllerFour,
+              readOnly: true,
               decoration: InputDecoration(
                 hintText: 'Enter your email',
               ),
             ),
-             SizedBox(height: 10),
+            SizedBox(height: 10),
             Text('Enter Answers:'),
             TextField(
               controller: _controllerFive,

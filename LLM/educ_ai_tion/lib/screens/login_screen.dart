@@ -14,6 +14,8 @@ class LoginScreenState extends State<LoginScreen> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   bool _showPassword = false;
   bool _isSigningUp = false;
   bool _isPasswordValid = false;
@@ -22,6 +24,8 @@ class LoginScreenState extends State<LoginScreen> {
     try {
       String email = _emailController.text.trim();
       String password = _passwordController.text.trim();
+      String firstName = _firstNameController.text.trim();
+      String lastName = _lastNameController.text.trim();
       if (_isSigningUp) {
         // Check if the user exists in the 'users' collection
         bool userExists = await checkUserExists(email);
@@ -41,6 +45,7 @@ class LoginScreenState extends State<LoginScreen> {
           email: email,
           password: password,
         );
+        await storeUserDetails(email, firstName, lastName);
         // Update the 'signedUp' status to true after the first sign-up
         await updateSignedUpStatus(email, true);
         print('Sign up successful!');
@@ -107,6 +112,19 @@ class LoginScreenState extends State<LoginScreen> {
           );
         },
       );
+    }
+  }
+
+// Function to store user first and last names in Firestore
+  Future<void> storeUserDetails(
+      String email, String firstName, String lastName) async {
+    try {
+      await FirebaseFirestore.instance.collection('users').doc(email).set({
+        'firstName': firstName,
+        'lastName': lastName,
+      });
+    } catch (e) {
+      print('Error storing user details: $e');
     }
   }
 
@@ -298,6 +316,19 @@ class LoginScreenState extends State<LoginScreen> {
                 TextButton(
                   onPressed: _resetPassword,
                   child: const Text('Forgot Password?'),
+                ),
+              ],
+            ),
+          if (_isSigningUp) // Only show these fields during sign up
+            Column(
+              children: [
+                TextField(
+                  controller: _firstNameController,
+                  decoration: const InputDecoration(labelText: 'First Name'),
+                ),
+                TextField(
+                  controller: _lastNameController,
+                  decoration: const InputDecoration(labelText: 'Last Name'),
                 ),
               ],
             ),
