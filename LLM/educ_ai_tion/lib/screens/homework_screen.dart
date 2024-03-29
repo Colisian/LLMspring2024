@@ -132,7 +132,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Homework'),
+        title: Text('View and Submit Homework'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -167,21 +167,21 @@ class _HomeworkFileState extends State<HomeworkFileList> {
               readOnly: true,
             ),
             SizedBox(height: 10),
-            Text('Student First Name:'),
+            Text('First Name:'),
             TextField(
               controller: _controllerTwo,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: 'Enter student first name',
+                hintText: 'Enter your first name',
               ),
             ),
             SizedBox(height: 10),
-            Text('Student Last Name:'),
+            Text('Last Name:'),
             TextField(
               controller: _controllerThree,
               readOnly: true,
               decoration: InputDecoration(
-                hintText: 'Enter student last name',
+                hintText: 'Enter your last name',
               ),
             ),
             SizedBox(height: 10),
