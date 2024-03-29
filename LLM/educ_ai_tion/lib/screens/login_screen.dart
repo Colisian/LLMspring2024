@@ -26,6 +26,12 @@ class LoginScreenState extends State<LoginScreen> {
       String password = _passwordController.text.trim();
       String firstName = _firstNameController.text.trim();
       String lastName = _lastNameController.text.trim();
+
+      if (_isSigningUp && (firstName.isEmpty || lastName.isEmpty)) {
+        _showErrorDialog('Please fill in your first and last names.');
+        return;
+      }
+
       if (_isSigningUp) {
         // Check if the user exists in the 'users' collection
         bool userExists = await checkUserExists(email);
@@ -255,8 +261,7 @@ class LoginScreenState extends State<LoginScreen> {
 
   Widget buildFlexibleButton(String text, VoidCallback onPressed) {
     return Flexible(
-      fit: FlexFit
-          .tight, // Force the buttons to expand and fill the available space
+      fit: FlexFit.tight,
       child: ElevatedButton(
         onPressed: onPressed,
         child: Text(text),
@@ -266,9 +271,8 @@ class LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Check the screen width to determine layout
     final screenWidth = MediaQuery.of(context).size.width;
-    final isMobileLayout = screenWidth < 600; // Threshold for mobile layout
+    final isMobileLayout = screenWidth < 600;
 
     Widget loginForm = Padding(
       padding: const EdgeInsets.all(16.0),
@@ -276,10 +280,9 @@ class LoginScreenState extends State<LoginScreen> {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          SizedBox(height: 20), // Space between the buttons and the logo
-          // Logo
+          SizedBox(height: 20),
           Image.asset('assets/images/logo.png',
-              width: isMobileLayout ? 420 : 600), // Adjust size as needed
+              width: isMobileLayout ? 420 : 600),
           SizedBox(height: 60),
           TextField(
             controller: _emailController,
@@ -306,16 +309,12 @@ class LoginScreenState extends State<LoginScreen> {
             obscureText: !_showPassword,
           ),
           if (_isSigningUp && _passwordController.text.length < 6)
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
+                Text(
                   'Password must be at least 6 characters long.',
                   style: TextStyle(color: Color.fromARGB(255, 63, 16, 151)),
-                ),
-                TextButton(
-                  onPressed: _resetPassword,
-                  child: const Text('Forgot Password?'),
                 ),
               ],
             ),
@@ -332,16 +331,25 @@ class LoginScreenState extends State<LoginScreen> {
                 ),
               ],
             ),
+          if (!_isSigningUp)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: _resetPassword,
+                  child: const Text('Forgot Password?'),
+                ),
+              ],
+            ),
           const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: <Widget>[
               buildFlexibleButton(
                   _isSigningUp ? 'Sign Up' : 'Sign In', _authenticate),
-              SizedBox(
-                  width: 16), // Optional: Add some space between the buttons
+              SizedBox(width: 16),
               buildFlexibleButton(
-                  _isSigningUp ? 'Switch to Login' : 'Switch to Sign Up',
+                  _isSigningUp ? 'Switch to Sign In' : 'Switch to Sign Up',
                   _toggleSignup),
             ],
           )
@@ -354,33 +362,28 @@ class LoginScreenState extends State<LoginScreen> {
         title: Text(_isSigningUp ? 'Sign Up' : 'Login'),
       ),
       body: isMobileLayout
-          ? SingleChildScrollView(child: loginForm) // For mobile, use as is
+          ? SingleChildScrollView(child: loginForm)
           : Center(
-              // Center content for non-mobile layouts
               child: SingleChildScrollView(
-                // Make it scrollable
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Expanded(
                       child: Container(
                         decoration: BoxDecoration(
-                          // Define the border here
                           border: Border.all(
-                            color: Color.fromARGB(
-                                255, 105, 18, 145), // Border color
-                            width: 8, // Border width
+                            color: const Color.fromARGB(255, 105, 18, 145),
+                            width: 8,
                           ),
                         ),
                         child: Image.asset(
                           'assets/images/teacher.png',
-                          fit: BoxFit.cover, // Image on the left half
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
                     Expanded(
-                      child:
-                          loginForm, // Form on the right half, already wrapped in SingleChildScrollView
+                      child: loginForm,
                     ),
                   ],
                 ),
