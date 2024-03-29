@@ -138,19 +138,19 @@ class _HomeworkFileState extends State<HomeworkFileList> {
               readOnly: true,
             ),
             SizedBox(height: 10),
-            Text('Student First Name:'),
+            Text('First Name:'),
             TextField(
               controller: _controllerTwo,
               decoration: InputDecoration(
-                hintText: 'Enter student first name',
+                hintText: 'Enter your first name',
               ),
             ),
             SizedBox(height: 10),
-            Text('Student Last Name:'),
+            Text('Last Name:'),
             TextField(
               controller: _controllerThree,
               decoration: InputDecoration(
-                hintText: 'Enter student last name',
+                hintText: 'Enter your last name',
               ),
             ),
             SizedBox(height: 10),
