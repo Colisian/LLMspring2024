@@ -103,7 +103,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Grading Screen'),
+        title: Text('View and Submit Homework'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

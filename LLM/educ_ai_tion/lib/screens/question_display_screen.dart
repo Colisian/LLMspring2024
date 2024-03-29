@@ -115,13 +115,9 @@ class _QuestionDisplayScreenState extends State<QuestionDisplayScreen> {
         // Generate the text content based on the selected questions
         String textContent = _selectedQuestions.map((question) {
           return '''
-      Grade: ${question.grade}
-      Subject: ${question.subject.name}
-      Topic: ${question.topic}
       Question: ${question.question}
-      
       ''';
-        }).join('\n\n');
+        }).join('\n');
         // Get the current date
         DateTime now = DateTime.now();
         String currentDate = '${now.year}-${now.month}-${now.day}';
