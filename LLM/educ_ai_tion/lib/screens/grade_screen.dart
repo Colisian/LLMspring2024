@@ -6,7 +6,7 @@ import 'dart:async';
 import 'dart:io';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:http/http.dart' as http;
-
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 // Grading Screen
 //
@@ -36,6 +36,11 @@ class _GradingScreenState extends State<GradingScreen> {
   List<String> fileNames = [];
   String? selectedFile;
 
+  List<Map<String, dynamic>> students = [];
+  String? selectedStudent = '';
+
+  List<String> studentNames = [];
+
   @override
   void initState() {
     super.initState();
@@ -43,36 +48,101 @@ class _GradingScreenState extends State<GradingScreen> {
   }
 
   Future<void> _fetchFileNames() async {
-    try{
+    try {
       final result = await storageRef.listAll();
-      final names = result.items.map((item) => item.name).where((name) => name.endsWith('.txt')).toList();
-      setState((){
+      final names = result.items
+          .map((item) => item.name)
+          .where((name) => name.endsWith('.txt'))
+          .toList();
+      setState(() {
         fileNames = names;
       });
-      } catch (e) {
-        print('Error fetching file names: $e');
+
+      if (fileNames.isNotEmpty) {
+        selectedFile = fileNames.first; // Select the first file by default
+        _fetchFileContent(selectedFile!);
+        _fetchStudents(selectedFile!); // Pass the selected file name
       }
+    } catch (e) {
+      print('Error fetching file names: $e');
     }
-
- Future<void> _fetchFileContent(String fileName) async {
-  try {
-    final downloadUrl = await storageRef.child(fileName).getDownloadURL();
-    final response = await http.get(Uri.parse(downloadUrl));
-
-    if (response.statusCode == 200) {
-      // If the server returns an OK response, update the text controller
-      setState(() {
-        _controllerOne.text = response.body;
-      });
-    } else {
-      // If the server did not return an OK response, throw an error
-      print('Failed to load file content');
-    }
-  } catch (e) {
-    print('Error fetching file content: $e');
   }
-}
-  
+
+  Future<void> _fetchStudents(String selectedAssignment) async {
+    try {
+      final snapshot = await FirebaseFirestore.instance
+          .collection('assignment_submissions')
+          .where('assignmentName', isEqualTo: selectedAssignment.toString())
+          .get();
+      print('Number of documents retrieved: ${snapshot.docs.length}');
+      List<String> studentNames = snapshot.docs.map((doc) {
+        final assignmentId = doc.id;
+        print('Assignment ID: $assignmentId');
+        // Split the assignmentId properly to extract the student name
+        final parts = assignmentId.split('_');
+        print('Parts after split: $parts');
+        if (parts.length == 2) {
+          return parts[0];
+        } else {
+          print(
+              'Error: Unable to extract student name from assignment ID: $assignmentId');
+          return '';
+        }
+      }).toList();
+      print('Student names: $studentNames');
+
+      // Finally, update the state with the filtered students
+      setState(() {
+        this.studentNames = studentNames;
+        if (studentNames.isNotEmpty) {
+          selectedStudent =
+              studentNames.first; // Set the default selected student
+        }
+      });
+    } catch (e) {
+      print('Error fetching students: $e');
+    }
+  }
+
+  void _fetchStudentAnswers(String studentName) async {
+    try {
+      final List<String> nameParts = studentName.split(' ');
+      final String firstName = nameParts[0];
+      final String lastName = nameParts[1];
+      final String assignmentName = selectedFile!;
+      final snapshot = await FirebaseFirestore.instance
+          .collection('assignment_submissions')
+          .doc('$studentName' + '_' + '$assignmentName')
+          .get();
+      final data = snapshot.data();
+      if (data != null) {
+        setState(() {
+          _controllerThree.text = data['answers'];
+        });
+      }
+    } catch (e) {
+      print('Error fetching student answers: $e');
+    }
+  }
+
+  Future<void> _fetchFileContent(String fileName) async {
+    try {
+      final downloadUrl = await storageRef.child(fileName).getDownloadURL();
+      final response = await http.get(Uri.parse(downloadUrl));
+
+      if (response.statusCode == 200) {
+        // If the server returns an OK response, update the text controller
+        setState(() {
+          _controllerOne.text = response.body;
+        });
+      } else {
+        // If the server did not return an OK response, throw an error
+        print('Failed to load file content');
+      }
+    } catch (e) {
+      print('Error fetching file content: $e');
+    }
+  }
 
   /// Generates questions based on the input text using the OpenAIService.
   void _generateQuestions() async {
@@ -161,34 +231,37 @@ class _GradingScreenState extends State<GradingScreen> {
           Scaffold.of(context).openDrawer();
         },
       ),
-      //drawer: const DrawerMenu(),
       body: Stack(
         children: [
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
-              children: [ if (fileNames.isNotEmpty) ...[
-                Text("Select Assignment Questions:"),
-                DropdownButton<String>(
-                  value: selectedFile,
-                  hint: Text('Select a file'),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedFile = newValue;
-                      _fetchFileContent(newValue!); // This function needs to be defined to fetch the content
-                    });
-                  },
-                  items: fileNames.map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                ),
-              ],
-              const SizedBox(height: 20),
-                const Text('Copy the assignment questions here:'),
+              children: [
+                if (fileNames.isNotEmpty) ...[
+                  Text("Select Assignment Questions:"),
+                  DropdownButton<String>(
+                    value: selectedFile,
+                    hint: Text('Select a file'),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        selectedFile = newValue;
+                        _fetchFileContent(newValue!); // Fetch file content
+                        _fetchStudents(
+                            newValue!); // Fetch students for the new assignment
+                      });
+                    },
+                    items:
+                        fileNames.map<DropdownMenuItem<String>>((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                  ),
+                ],
+                const SizedBox(height: 20),
+                const Text('Assignment Questions:'),
                 TextField(
                   controller: _controllerOne,
                   decoration: const InputDecoration(
@@ -215,41 +288,61 @@ class _GradingScreenState extends State<GradingScreen> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Copy the students answers:'),
+                    const Text('Select a student to grade:'),
+                    DropdownButton<String>(
+                      value: selectedStudent,
+                      hint: Text('Select a student'),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedStudent = newValue;
+                          _fetchStudentAnswers(newValue!);
+                        });
+                      },
+                      items: studentNames
+                          .map<DropdownMenuItem<String>>((studentName) {
+                        return DropdownMenuItem<String>(
+                          value: studentName,
+                          child: Text(studentName),
+                        );
+                      }).toList(),
+                    ),
+                    const SizedBox(height: 20),
+                    const Text('Student Answers:'),
                     TextField(
                       controller: _controllerThree,
                       decoration: const InputDecoration(
-                        hintText: 'e.g., "1. the first president was ..."',
+                        hintText: 'Student answers will be displayed here',
                       ),
                       maxLines: 5,
+                      enabled: false, // Disable editing
                     ),
                     const SizedBox(height: 20),
                   ],
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                    onPressed: _generateQuestions,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[700],
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text('Grade Questions')),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Text(_grade),
-                  ),
-                ),
-                if (_isLoading) // Check if the app is currently loading
-          Center(
-            child: CircularProgressIndicator(), // Show loading indicator
-          ),
               ],
             ),
           ),
+          ElevatedButton(
+            onPressed: _generateQuestions,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.blue[700],
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.0),
+              ),
+            ),
+            child: const Text('Grade Questions'),
+          ),
+          const SizedBox(height: 20),
+          Expanded(
+            child: SingleChildScrollView(
+              child: Text(_grade),
+            ),
+          ),
+          if (_isLoading) // Check if the app is currently loading
+            Center(
+              child: CircularProgressIndicator(), // Show loading indicator
+            ),
           Positioned(
             bottom: 20,
             left: 20,

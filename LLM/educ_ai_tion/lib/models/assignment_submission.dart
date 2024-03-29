@@ -1,14 +1,14 @@
-import 'student.dart';
-
 class AssignmentSubmission {
-  final String assignmentId;
-  final Student student;
-  final List<String> answers;
+  final String assignmentName;
+  final String studentName;
+  final String studentEmail;
+  final String answers;
   final DateTime submissionDateTime;
 
   AssignmentSubmission({
-    required this.assignmentId,
-    required this.student,
+    required this.assignmentName,
+    required this.studentName,
+    required this.studentEmail,
     required this.answers,
     required this.submissionDateTime,
   });

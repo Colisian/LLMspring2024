@@ -4,6 +4,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:educ_ai_tion/models/assignment_submission.dart';
+import 'package:educ_ai_tion/services/assignment_submission_data.dart';
 
 class HomeworkFileList extends StatefulWidget {
   const HomeworkFileList({Key? key});
@@ -24,8 +26,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   List<String> fileNames = [];
   String? selectedFile;
 
-  final AssignmentData _assignmentData =
-      AssignmentData(); // Instance of AssignmentData
+  final AssignmentData _assignmentData = AssignmentData();
 
   @override
   void initState() {
@@ -94,13 +95,15 @@ class _HomeworkFileState extends State<HomeworkFileList> {
 
   Future<void> _saveSubmission() async {
     try {
+      String firstName = _controllerTwo.text.trim();
+      String lastName = _controllerThree.text.trim();
+      String assignmentName = selectedFile ?? '';
+      String studentEmail = _controllerFour.text.trim();
+
       AssignmentSubmission submission = AssignmentSubmission(
-        assignmentId: selectedFile ?? '',
-        student: Student(
-          firstName: _controllerTwo.text.trim(),
-          lastName: _controllerThree.text.trim(),
-          email: _controllerFour.text.trim(),
-        ),
+        assignmentName: assignmentName,
+        studentName: '$firstName $lastName',
+        studentEmail: studentEmail,
         answers: _controllerFive.text.trim(),
         submissionDateTime: DateTime.now(),
       );
@@ -129,7 +132,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Grading Screen'),
+        title: Text('Homework'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -207,51 +210,5 @@ class _HomeworkFileState extends State<HomeworkFileList> {
         ),
       ),
     );
-  }
-}
-
-class AssignmentSubmission {
-  final String assignmentId;
-  final Student student;
-  final String answers;
-  final DateTime submissionDateTime;
-
-  AssignmentSubmission({
-    required this.assignmentId,
-    required this.student,
-    required this.answers,
-    required this.submissionDateTime,
-  });
-}
-
-class Student {
-  final String firstName;
-  final String lastName;
-  final String email;
-
-  Student({
-    required this.firstName,
-    required this.lastName,
-    required this.email,
-  });
-}
-
-class AssignmentData {
-  Future<void> addAssignmentSubmission(AssignmentSubmission submission) async {
-    try {
-      await FirebaseFirestore.instance
-          .collection('assignment_submissions')
-          .doc(submission.assignmentId)
-          .set({
-        'studentFirstName': submission.student.firstName,
-        'studentLastName': submission.student.lastName,
-        'studentEmail': submission.student.email,
-        'answers': submission.answers,
-        'submissionDateTime': submission.submissionDateTime,
-      });
-    } catch (e) {
-      print('Error adding assignment submission: $e');
-      throw e;
-    }
   }
 }

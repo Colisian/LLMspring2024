@@ -6,13 +6,13 @@ import 'package:flutter/material.dart';
 import 'question.dart';
 
 class Assignment {
-  final String assignmentId;
+  final String assignmentName;
   final List<Question> questions;
   final List<String> studentAnswers;
   String rubric;
 
   Assignment({
-    required this.assignmentId,
+    required this.assignmentName,
     required this.questions,
     required this.studentAnswers,
     this.rubric = '',
