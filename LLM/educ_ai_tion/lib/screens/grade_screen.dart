@@ -78,11 +78,10 @@ class _GradingScreenState extends State<GradingScreen> {
       List<String> studentNames = snapshot.docs.map((doc) {
         final assignmentId = doc.id;
         print('Assignment ID: $assignmentId');
-        // Split the assignmentId properly to extract the student name
-        final parts = assignmentId.split('_');
-        print('Parts after split: $parts');
-        if (parts.length == 2) {
-          return parts[0];
+        final index = assignmentId.indexOf('_');
+        if (index != -1) {
+          final studentName = assignmentId.substring(0, index);
+          return studentName;
         } else {
           print(
               'Error: Unable to extract student name from assignment ID: $assignmentId');
