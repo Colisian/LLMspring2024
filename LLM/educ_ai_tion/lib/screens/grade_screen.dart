@@ -94,8 +94,8 @@ class _GradingScreenState extends State<GradingScreen> {
       setState(() {
         this.studentNames = studentNames;
         if (studentNames.isNotEmpty) {
-          selectedStudent =
-              studentNames.first; // Set the default selected student
+          selectedStudent = studentNames.first;
+          _fetchStudentAnswers(selectedStudent!);
         }
       });
     } catch (e) {
@@ -294,7 +294,7 @@ class _GradingScreenState extends State<GradingScreen> {
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedStudent = newValue;
-                          _fetchStudentAnswers(newValue!);
+                          // _fetchStudentAnswers(newValue!);
                         });
                       },
                       items: studentNames
