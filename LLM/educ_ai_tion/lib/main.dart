@@ -38,7 +38,7 @@ class MainApp extends StatelessWidget {
         hintColor: Colors.cyan[600],
       ),
       themeMode: themeProvider.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-      home: WelcomeScreen(),
+      home: LoginScreen(),
     );
   }
 }
