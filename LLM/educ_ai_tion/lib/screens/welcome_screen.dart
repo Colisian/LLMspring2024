@@ -10,6 +10,7 @@ class WelcomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('Educ_ai_tion'),
+        automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
         // Wrap with SingleChildScrollView for vertical scrolling

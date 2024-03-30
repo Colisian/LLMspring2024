@@ -1,3 +1,4 @@
+import 'package:educ_ai_tion/screens/login_screen.dart';
 import 'package:educ_ai_tion/screens/student_home_page.dart';
 import 'package:educ_ai_tion/screens/welcome_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -96,7 +97,7 @@ class DrawerMenu extends StatelessWidget {
               FirebaseAuth.instance.signOut();
               Navigator.pop(context);
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => WelcomeScreen()));
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
             },
           ),
         ],

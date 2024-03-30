@@ -230,6 +230,7 @@ class _GradingScreenState extends State<GradingScreen> {
           Scaffold.of(context).openDrawer();
         },
       ),
+      //drawer: const DrawerMenu(),
       body: Stack(
         children: [
           Padding(
@@ -316,44 +317,47 @@ class _GradingScreenState extends State<GradingScreen> {
                       enabled: false, // Disable editing
                     ),
                     const SizedBox(height: 20),
+                    Text('Grade: $_grade',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight:
+                                FontWeight.bold)), // Display the grade here
+                    const SizedBox(height: 20),
                   ],
                 ),
               ],
             ),
           ),
-          ElevatedButton(
-            onPressed: _generateQuestions,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue[700],
-              foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
+          Align(
+            alignment: Alignment.bottomCenter,
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  ElevatedButton(
+                    onPressed: _generateQuestions,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 92, 20, 224),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text('Grade Questions'),
+                  ),
+                  ElevatedButton(
+                    onPressed: _clearResponse,
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[700],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        )),
+                    child: const Text('Clear Response'),
+                  ),
+                ],
               ),
-            ),
-            child: const Text('Grade Questions'),
-          ),
-          const SizedBox(height: 20),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Text(_grade),
-            ),
-          ),
-          if (_isLoading) // Check if the app is currently loading
-            Center(
-              child: CircularProgressIndicator(), // Show loading indicator
-            ),
-          Positioned(
-            bottom: 20,
-            left: 20,
-            child: ElevatedButton(
-              onPressed: _clearResponse,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[700],
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  )),
-              child: const Text('Clear Response'),
             ),
           )
         ],

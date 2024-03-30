@@ -20,7 +20,12 @@ class _ActivityState extends State<Activity> {
   String? _selectedSchoolLevel;
   String? _selectedDifficultyLevel;
 
-  final List<String> _schoolLevels = ['High-School', 'Middle School', 'Elementary School', 'University'];
+  final List<String> _schoolLevels = [
+    'High-School',
+    'Middle School',
+    'Elementary School',
+    'University'
+  ];
   final List<String> _difficultyLevels = ['Hard', 'Medium', 'Easy'];
 
   final OpenAIService _openAIService =
@@ -77,7 +82,7 @@ class _ActivityState extends State<Activity> {
       );
       return;
     }
-final String prompt2 =
+    final String prompt2 =
         "Are the following answers correct?  If not, give me a hint but don't tell me the answers: ${_controller2.text}.";
 
     try {
@@ -137,7 +142,7 @@ final String prompt2 =
     return Scaffold(
       appBar: AppBar(
         title: Text('Study Activity Generator'),
-        backgroundColor: Colors.blue[700],
+        backgroundColor: Color.fromARGB(255, 100, 34, 153),
       ),
       body: Stack(
         children: [
@@ -146,7 +151,8 @@ final String prompt2 =
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text('Enter information about the topic you would like to study:'),
+                const Text(
+                    'Enter information about the topic you would like to study:'),
                 TextField(
                   controller: _controller1,
                   decoration: const InputDecoration(
@@ -174,7 +180,8 @@ final String prompt2 =
                         }).toList(),
                         decoration: InputDecoration(
                           labelText: 'Select School Level',
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
                           ),
@@ -198,7 +205,8 @@ final String prompt2 =
                         }).toList(),
                         decoration: InputDecoration(
                           labelText: 'Select Difficulty',
-                          contentPadding: EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+                          contentPadding: EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 10.0),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(5.0),
                           ),
@@ -219,7 +227,7 @@ final String prompt2 =
                 ElevatedButton(
                   onPressed: _generateQuestions,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue[700],
+                    backgroundColor: Color.fromARGB(255, 92, 20, 224),
                     foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10.0),
@@ -236,25 +244,25 @@ final String prompt2 =
               ],
             ),
           ),
-           if (_isLoading) // Check if the app is currently loading
-          Center(
-            child: CircularProgressIndicator(), // Show loading indicator
-          ),
+          if (_isLoading) // Check if the app is currently loading
+            Center(
+              child: CircularProgressIndicator(), // Show loading indicator
+            ),
           Positioned(
             bottom: 20,
-            right: 20,
+            left: 10,
             child: ElevatedButton(
               onPressed: _saveResponse,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
+                backgroundColor: Color.fromARGB(255, 114, 76, 175),
               ),
               child: const Text('Check Answers'),
             ),
           ),
           Positioned(
             bottom: 20,
-            left: 20,
+            right: 10,
             child: ElevatedButton(
               onPressed: _clearResponse,
               style: ElevatedButton.styleFrom(
@@ -268,4 +276,4 @@ final String prompt2 =
       ),
     );
   }
-}   
+}
