@@ -12,8 +12,10 @@ class QuestionFileList extends StatefulWidget {
 }
 
 class _CombinedScreenState extends State<QuestionFileList> {
-  final Reference storageRef =
+  final Reference questionStorageRef =
       FirebaseStorage.instance.ref().child('selected_questions');
+  final Reference filesStorageRef =
+      FirebaseStorage.instance.ref().child('files');
   late List<String> fileNames = [];
   final FileStorageService _storageService = FileStorageService();
   Map<String, Uint8List> _pickedFilesBytes = {};
@@ -27,12 +29,53 @@ class _CombinedScreenState extends State<QuestionFileList> {
 
   Future<void> getFileNames() async {
     try {
-      ListResult result = await storageRef.listAll();
+      ListResult questionsResult = await questionStorageRef.listAll();
+      List<String> questionsFileNames =
+          questionsResult.items.map((item) => item.name).toList();
+
+      ListResult filesResult = await filesStorageRef.listAll();
+      List<String> filesFileNames =
+          filesResult.items.map((item) => item.name).toList();
       setState(() {
-        fileNames = result.items.map((item) => item.name).toList();
+        fileNames = [...questionsFileNames, ...filesFileNames];
       });
     } catch (e) {
       print('Error fetching file names: $e');
+    }
+  }
+
+  Future<void> downloadFile(String fileName) async {
+    try {
+      String? downloadUrl;
+
+      // Attempt to get the download URL from the first location
+      try {
+        downloadUrl = await questionStorageRef.child(fileName).getDownloadURL();
+      } catch (e) {
+        print('File not found in selected_questions, trying files: $e');
+      }
+
+      // If the file wasn't in the first location, try the second
+      if (downloadUrl == null) {
+        try {
+          downloadUrl = await filesStorageRef.child(fileName).getDownloadURL();
+        } catch (e) {
+          print('File not found in files either: $e');
+        }
+      }
+
+      // If a download URL was found, open it
+      if (downloadUrl != null) {
+        if (await canLaunch(downloadUrl)) {
+          await launch(downloadUrl);
+        } else {
+          throw 'Could not launch $downloadUrl';
+        }
+      } else {
+        print('File not found in any location.');
+      }
+    } catch (e) {
+      print('Error downloading file: $e');
     }
   }
 
@@ -111,7 +154,7 @@ class _CombinedScreenState extends State<QuestionFileList> {
                 return ListTile(
                   title: Text(fileName),
                   trailing: TextButton(
-                    onPressed: () {}, // Add logic to download or view the file
+                    onPressed: () => downloadFile(fileName),
                     child: Text('Download'),
                   ),
                 );
