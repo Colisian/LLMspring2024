@@ -295,7 +295,7 @@ class _GradingScreenState extends State<GradingScreen> {
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedStudent = newValue;
-                          // _fetchStudentAnswers(newValue!);
+                          _fetchStudentAnswers(newValue!);
                         });
                       },
                       items: studentNames
