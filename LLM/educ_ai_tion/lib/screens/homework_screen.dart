@@ -133,6 +133,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
     return Scaffold(
       appBar: AppBar(
         title: Text('View and Submit Homework'),
+        backgroundColor: Color.fromARGB(255, 100, 34, 153),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -204,6 +205,13 @@ class _HomeworkFileState extends State<HomeworkFileList> {
             SizedBox(height: 10),
             ElevatedButton(
               onPressed: _saveSubmission,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Color.fromARGB(255, 92, 20, 224),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                ),
+              ),
               child: Text('Save Submission'),
             ),
           ],

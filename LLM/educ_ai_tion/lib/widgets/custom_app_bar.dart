@@ -1,4 +1,5 @@
 import 'package:educ_ai_tion/screens/file_upload_screen.dart';
+import 'package:educ_ai_tion/screens/login_screen.dart';
 import 'package:educ_ai_tion/screens/question_file_list.dart';
 import 'package:educ_ai_tion/screens/question_generator_screen.dart';
 import 'package:educ_ai_tion/screens/settings_screen.dart';
@@ -101,7 +102,7 @@ class DrawerMenu extends StatelessWidget {
               FirebaseAuth.instance.signOut();
               Navigator.pop(context);
               Navigator.pushReplacement(context,
-                  MaterialPageRoute(builder: (context) => WelcomeScreen()));
+                  MaterialPageRoute(builder: (context) => LoginScreen()));
             },
           ),
         ],

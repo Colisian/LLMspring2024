@@ -172,7 +172,7 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
             ElevatedButton(
               onPressed: _generateQuestions,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blue[700],
+                backgroundColor: Color.fromARGB(255, 92, 20, 224),
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10.0),
@@ -206,7 +206,7 @@ class _QuestionGeneratorScreenState extends State<QuestionGeneratorScreen> {
               onPressed: _saveQuestionsToFirestore,
               style: ElevatedButton.styleFrom(
                 foregroundColor: Colors.white,
-                backgroundColor: Colors.blue,
+                backgroundColor: Color.fromARGB(255, 114, 76, 175),
               ),
               child: const Text('Save Response'),
             ),

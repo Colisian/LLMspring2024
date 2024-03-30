@@ -97,7 +97,6 @@ class _SuggestScreenState extends State<SuggestScreen> {
           Scaffold.of(context).openDrawer();
         },
       ),
-      //drawer: const DrawerMenu(),
       body: Stack(
         children: [
           Padding(
@@ -114,18 +113,6 @@ class _SuggestScreenState extends State<SuggestScreen> {
                   maxLines: 5,
                 ),
                 const SizedBox(height: 20),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                    onPressed: _generateQuestions,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue[700],
-                      foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                      ),
-                    ),
-                    child: const Text('Suggest Activities')),
-                const SizedBox(height: 20),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Text(_grade),
@@ -135,23 +122,43 @@ class _SuggestScreenState extends State<SuggestScreen> {
             ),
           ),
           if (_isLoading) // Check if the app is currently loading
-          Center(
-            child: CircularProgressIndicator(), // Show loading indicator
-          ),
+            Center(
+              child: CircularProgressIndicator(), // Show loading indicator
+            ),
           Positioned(
             bottom: 20,
-            left: 20,
-            child: ElevatedButton(
-              onPressed: _clearResponse,
-              style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue[700],
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  )),
-              child: const Text('Clear Response'),
+            left: 0,
+            right: 0,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Row(
+                children: [
+                  ElevatedButton(
+                    onPressed: _generateQuestions,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color.fromARGB(255, 92, 20, 224),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: const Text('Suggest Activities'),
+                  ),
+                  Spacer(), // This will push the clear button to the far right
+                  ElevatedButton(
+                    onPressed: _clearResponse,
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red[700],
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        )),
+                    child: const Text('Clear Response'),
+                  ),
+                ],
+              ),
             ),
-          )
+          ),
         ],
       ),
     );

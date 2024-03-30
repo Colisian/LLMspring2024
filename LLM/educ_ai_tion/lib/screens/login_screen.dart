@@ -360,6 +360,7 @@ class LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(_isSigningUp ? 'Sign Up' : 'Login'),
+        automaticallyImplyLeading: false,
       ),
       body: isMobileLayout
           ? SingleChildScrollView(child: loginForm)

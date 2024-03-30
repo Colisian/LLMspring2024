@@ -274,6 +274,27 @@ class _QuestionDisplayScreenState extends State<QuestionDisplayScreen> {
                 ? () => _storeSelectedQuestions(context)
                 : null,
             child: const Text('Save Selected Questions'),
+            style: ButtonStyle(
+              backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  // Button is disabled
+                  if (states.contains(MaterialState.disabled)) {
+                    return Colors.grey; // Grey color
+                  }
+                  // Button is enabled
+                  return Color.fromARGB(
+                      255, 92, 20, 224); // Your specified purple color
+                },
+              ),
+              foregroundColor: MaterialStateProperty.resolveWith<Color>(
+                (Set<MaterialState> states) {
+                  if (states.contains(MaterialState.disabled)) {
+                    return Colors.black; // Text color when button is disabled
+                  }
+                  return Colors.white; // Text color when button is enabled
+                },
+              ),
+            ),
           ),
         ],
       ),
