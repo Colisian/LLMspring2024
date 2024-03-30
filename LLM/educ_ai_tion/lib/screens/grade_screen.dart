@@ -319,7 +319,7 @@ class _GradingScreenState extends State<GradingScreen> {
                     const SizedBox(height: 10),
                     Text('Grade: $_grade',
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 14,
                             fontWeight:
                                 FontWeight.bold)), // Display the grade here
                     const SizedBox(height: 10),
