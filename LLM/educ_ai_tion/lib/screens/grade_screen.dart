@@ -269,7 +269,7 @@ class _GradingScreenState extends State<GradingScreen> {
                   ),
                   maxLines: 5,
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 10),
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -280,9 +280,9 @@ class _GradingScreenState extends State<GradingScreen> {
                         hintText:
                             'e.g., "1 point each question for correct grammer, 2 points each question for correct content. . ."',
                       ),
-                      maxLines: 5,
+                      maxLines: 1,
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
                 Column(
@@ -306,23 +306,23 @@ class _GradingScreenState extends State<GradingScreen> {
                         );
                       }).toList(),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     const Text('Student Answers:'),
                     TextField(
                       controller: _controllerThree,
                       decoration: const InputDecoration(
                         hintText: 'Student answers will be displayed here',
                       ),
-                      maxLines: 5,
+                      maxLines: 2,
                       enabled: false, // Disable editing
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     Text('Grade: $_grade',
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight:
                                 FontWeight.bold)), // Display the grade here
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                   ],
                 ),
               ],
