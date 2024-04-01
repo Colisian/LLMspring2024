@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,8 +23,6 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   String? selectedFile;
   int _numOfLines = 1; // Default to 1 line
 
-  final AssignmentData _assignmentData = AssignmentData();
-
   @override
   void initState() {
     super.initState();
@@ -44,7 +41,8 @@ class _HomeworkFileState extends State<HomeworkFileList> {
         setState(() {
           _firstNameController.text = userDoc['firstName'] ?? '';
           _lastNameController.text = userDoc['lastName'] ?? '';
-          _emailController.text = email;
+          _emailController.text =
+              email; // Assuming the user's email is their document ID
         });
       }
     } catch (e) {
@@ -80,7 +78,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
         final lines = '\n'.allMatches(response.body).length + 1;
         setState(() {
           _fileContentController.text = response.body;
-          _numOfLines = math.max(lines, 10); // Corrected to use math.max
+          _numOfLines = lines > 10 ? lines : 10; // Ensure a minimum size
         });
       } else {
         _showSnackBar('Failed to load file content');
@@ -93,27 +91,19 @@ class _HomeworkFileState extends State<HomeworkFileList> {
   Future<void> _saveSubmission() async {
     try {
       AssignmentSubmission submission = AssignmentSubmission(
-        assignmentName: selectedFile ?? '',
-        studentName:
-            '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
-        studentEmail: _emailController.text.trim(),
-        answers: _fileContentController.text.trim(),
+        assignmentName: selectedFile ?? 'No file selected',
+        studentName: '${_firstNameController.text} ${_lastNameController.text}',
+        studentEmail: _emailController.text,
+        answers: _fileContentController.text,
         submissionDateTime: DateTime.now(),
       );
 
-      await _assignmentData.addAssignmentSubmission(submission);
-      _showSnackBar('Submission saved to Firebase');
-      _clearFields();
+      // Your logic to add submission to Firestore or another service
+      // For example: await _assignmentData.addAssignmentSubmission(submission);
+      _showSnackBar('Submission saved');
     } catch (e) {
       _showSnackBar('Error saving submission: $e');
     }
-  }
-
-  void _clearFields() {
-    _fileContentController.clear();
-    _firstNameController.clear();
-    _lastNameController.clear();
-    _emailController.clear();
   }
 
   void _showSnackBar(String message) {
@@ -129,6 +119,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
         backgroundColor: Color.fromARGB(255, 100, 34, 153),
       ),
       body: SingleChildScrollView(
+        // Added to handle overflow when keyboard appears
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,30 +154,33 @@ class _HomeworkFileState extends State<HomeworkFileList> {
               controller: _fileContentController,
               maxLines: _numOfLines,
               decoration: InputDecoration(
-                hintText:
-                    'Assignment will be loaded here. Please input your answer following each specific question.',
+                hintText: 'Answers will be displayed here',
                 border: OutlineInputBorder(),
               ),
+              readOnly: false, // Now user can input answers
             ),
             SizedBox(height: 20),
             Text("First Name:"),
-            TextField(controller: _firstNameController, readOnly: true),
+            TextField(
+              controller: _firstNameController,
+              readOnly: true,
+            ),
             SizedBox(height: 20),
             Text("Last Name:"),
-            TextField(controller: _lastNameController, readOnly: true),
+            TextField(
+              controller: _lastNameController,
+              readOnly: true,
+            ),
             SizedBox(height: 20),
             Text("Email:"),
-            TextField(controller: _emailController, readOnly: true),
+            TextField(
+              controller: _emailController,
+              readOnly: true,
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: _saveSubmission,
               child: Text('Save Submission'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _clearFields,
-              child: Text('Clear Fields'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             ),
           ],
         ),

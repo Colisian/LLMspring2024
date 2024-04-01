@@ -163,8 +163,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
               controller: _fileContentController,
               maxLines: _numOfLines,
               decoration: InputDecoration(
-                hintText:
-                    'Assignment will be loaded here. Please input your answer following each specific question.',
+                hintText: 'Answers will be displayed here',
                 border: OutlineInputBorder(),
               ),
             ),

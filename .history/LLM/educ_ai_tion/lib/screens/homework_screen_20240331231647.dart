@@ -1,11 +1,14 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:http/http.dart' as http;
+import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:educ_ai_tion/models/assignment_submission.dart';
 import 'package:educ_ai_tion/services/assignment_submission_data.dart';
+import 'package:flutter/material.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart' as http;
 
 class HomeworkFileList extends StatefulWidget {
   const HomeworkFileList({Key? key}) : super(key: key);
@@ -16,46 +19,20 @@ class HomeworkFileList extends StatefulWidget {
 
 class _HomeworkFileState extends State<HomeworkFileList> {
   final TextEditingController _fileContentController = TextEditingController();
-  final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-
   List<String> fileNames = [];
   String? selectedFile;
   int _numOfLines = 1; // Default to 1 line
-
-  final AssignmentData _assignmentData = AssignmentData();
 
   @override
   void initState() {
     super.initState();
     _fetchFileNames();
-    _populateUserDetails();
-  }
-
-  Future<void> _populateUserDetails() async {
-    try {
-      String? email = FirebaseAuth.instance.currentUser?.email;
-      if (email != null) {
-        DocumentSnapshot userDoc = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(email)
-            .get();
-        setState(() {
-          _firstNameController.text = userDoc['firstName'] ?? '';
-          _lastNameController.text = userDoc['lastName'] ?? '';
-          _emailController.text = email;
-        });
-      }
-    } catch (e) {
-      _showSnackBar('Error fetching user details: $e');
-    }
   }
 
   Future<void> _fetchFileNames() async {
-    final Reference storageRef =
-        FirebaseStorage.instance.ref().child('selected_questions');
     try {
+      final Reference storageRef =
+          FirebaseStorage.instance.ref().child('selected_questions');
       final result = await storageRef.listAll();
       final names = result.items
           .map((item) => item.name)
@@ -80,7 +57,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
         final lines = '\n'.allMatches(response.body).length + 1;
         setState(() {
           _fileContentController.text = response.body;
-          _numOfLines = math.max(lines, 10); // Corrected to use math.max
+          _numOfLines = lines > 10 ? lines : 10; // Ensure a minimum size
         });
       } else {
         _showSnackBar('Failed to load file content');
@@ -88,32 +65,6 @@ class _HomeworkFileState extends State<HomeworkFileList> {
     } catch (e) {
       _showSnackBar('Error fetching file content: $e');
     }
-  }
-
-  Future<void> _saveSubmission() async {
-    try {
-      AssignmentSubmission submission = AssignmentSubmission(
-        assignmentName: selectedFile ?? '',
-        studentName:
-            '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}',
-        studentEmail: _emailController.text.trim(),
-        answers: _fileContentController.text.trim(),
-        submissionDateTime: DateTime.now(),
-      );
-
-      await _assignmentData.addAssignmentSubmission(submission);
-      _showSnackBar('Submission saved to Firebase');
-      _clearFields();
-    } catch (e) {
-      _showSnackBar('Error saving submission: $e');
-    }
-  }
-
-  void _clearFields() {
-    _fileContentController.clear();
-    _firstNameController.clear();
-    _lastNameController.clear();
-    _emailController.clear();
   }
 
   void _showSnackBar(String message) {
@@ -128,7 +79,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
         title: Text('View and Submit Homework'),
         backgroundColor: Color.fromARGB(255, 100, 34, 153),
       ),
-      body: SingleChildScrollView(
+      body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -163,30 +114,10 @@ class _HomeworkFileState extends State<HomeworkFileList> {
               controller: _fileContentController,
               maxLines: _numOfLines,
               decoration: InputDecoration(
-                hintText:
-                    'Assignment will be loaded here. Please input your answer following each specific question.',
+                hintText: 'Answers will be displayed here',
                 border: OutlineInputBorder(),
               ),
-            ),
-            SizedBox(height: 20),
-            Text("First Name:"),
-            TextField(controller: _firstNameController, readOnly: true),
-            SizedBox(height: 20),
-            Text("Last Name:"),
-            TextField(controller: _lastNameController, readOnly: true),
-            SizedBox(height: 20),
-            Text("Email:"),
-            TextField(controller: _emailController, readOnly: true),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _saveSubmission,
-              child: Text('Save Submission'),
-            ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _clearFields,
-              child: Text('Clear Fields'),
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              readOnly: true, // Set to false if you want users to edit inside
             ),
           ],
         ),

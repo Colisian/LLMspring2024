@@ -163,8 +163,7 @@ class _HomeworkFileState extends State<HomeworkFileList> {
               controller: _fileContentController,
               maxLines: _numOfLines,
               decoration: InputDecoration(
-                hintText:
-                    'Assignment will be loaded here. Please input your answer following each specific question.',
+                hintText: 'Answers will be displayed here',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -182,7 +181,6 @@ class _HomeworkFileState extends State<HomeworkFileList> {
               onPressed: _saveSubmission,
               child: Text('Save Submission'),
             ),
-            SizedBox(height: 20),
             ElevatedButton(
               onPressed: _clearFields,
               child: Text('Clear Fields'),
