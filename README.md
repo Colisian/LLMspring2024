@@ -42,4 +42,4 @@ We welcome contributions to the **LLMs Spring 2024 Developer Edition**. Please r
 
 ## License
 
-This project is licensed under the CCO License - see the `LICENSE` file for details.
+This project is licensed under the CCO-1 License - see the `LICENSE` file for details.
