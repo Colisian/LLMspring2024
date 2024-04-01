@@ -40,6 +40,12 @@ Welcome to the **LLMs Spring 2024 Developer Edition**, a comprehensive education
 
 We welcome contributions to the **LLMs Spring 2024 Developer Edition**. Please read through our contributing guidelines before making a pull request.
 
+## Hosted Site
+The web version of our app can be found here: https://llmspring2024-1cef2.web.app/
+
+The Site is managed through Firebase Hosting.
+Please contact the developer team if you would like login access.
+
 ## License
 
 This project is licensed under the CCO-1 License - see the `LICENSE` file for details.
