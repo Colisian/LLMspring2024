@@ -23,3 +23,23 @@ Welcome to the **LLMs Spring 2024 Developer Edition**, a comprehensive education
    ```bash
    cd LLMsSpring2024-developer/LLM/educ_ai_tion
    flutter pub get
+3. Setup Firebase for each platform according to your project needs (refer to Firebase documentation for platform-specific setup).
+
+### Running the Project
+
+- **Android/iOS**: Open an emulator or connect a device and run:
+  ```bash
+  flutter run
+  ```
+- **Web**: Ensure you have configured Firebase for web and run:
+  ```bash
+  flutter run -d chrome
+  ```
+
+## Contributing
+
+We welcome contributions to the **LLMs Spring 2024 Developer Edition**. Please read through our contributing guidelines before making a pull request.
+
+## License
+
+This project is licensed under the CCO License - see the `LICENSE` file for details.
